@@ -1,1 +1,5 @@
 # frontend
+
+```bash
+bun dev
+```
