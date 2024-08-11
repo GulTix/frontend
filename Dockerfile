@@ -1,15 +1,13 @@
-FROM oven/bun:latest
-
+FROM node:lts-alpine AS runtime
+RUN npm install -g pnpm
 WORKDIR /app
-
-COPY package.json .
 
 COPY . .
 
-RUN bun install
+RUN pnpm install
+RUN pnpm run build
 
-EXPOSE 3000
-
-RUN bun run build
-
-CMD [ "bun", "run", "start" ]
+ENV HOST=0.0.0.0
+ENV PORT=4321
+EXPOSE 4321
+CMD node ./dist/server/entry.mjs

@@ -1,5 +1,6 @@
 # frontend
 
 ```bash
-bun dev
+pnpm i
+pnpm run dev
 ```
