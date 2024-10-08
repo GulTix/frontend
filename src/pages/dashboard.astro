@@ -1,0 +1,65 @@
+---
+import Layout from "@/layouts/Layout.astro";
+
+const apiUrl = import.meta.env.ASTRO_API_URL ?? process.env.ASTRO_API_URL;
+
+const token = Astro.cookies.get("authToken")?.value;
+if (!token) {
+  return Astro.redirect("/");
+}
+
+interface Event {
+  id: string;
+  name: string;
+  google_form_link: string;
+  deleted: boolean;
+}
+
+let events: Event[] = [];
+
+try {
+  const resp = await fetch(`${apiUrl}/v1/events`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!resp.ok) {
+    throw new Error(`HTTP error! status: ${resp.status}`);
+  }
+
+  const { data } = await resp.json();
+  events = data || []; // Ensure events is always an array
+  console.log(data);
+} catch (error) {
+  console.error("Error fetching events:", error);
+}
+---
+
+<Layout title="Dashboard">
+  <main class="container mx-auto px-4 py-8">
+    <div class="mb-6 flex items-center justify-between">
+      <h1 class="text-3xl font-bold">Dashboard</h1>
+    </div>
+    {
+      events.length > 0 ? (
+        <ul class="space-y-4">
+          {events.map((event) => (
+            <li class="rounded border p-4">
+              <h2 class="text-xl font-semibold">{event.name}</h2>
+              <a
+                href={event.google_form_link}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-blue-500 hover:underline">
+                Google Form Link
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p>No events found.</p>
+      )
+    }
+  </main>
+</Layout>

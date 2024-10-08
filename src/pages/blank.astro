@@ -27,8 +27,15 @@ interface Data {
 const { data } = respJson as Data;
 
 console.log(respJson);
+
+// Set HTTP-only cookie with the token
+Astro.response.headers.set("Set-Cookie", `authToken=${data.token}; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`);
+Astro.response.headers.set(
+  "Set-Cookie",
+  `user=${JSON.stringify(data.user)}; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`
+);
 ---
 
-<Layout title="Blank">
-  <div>Blank</div>
+<Layout title="Authentication Successful">
+  <div>Authentication Successful</div>
 </Layout>
