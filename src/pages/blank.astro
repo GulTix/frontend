@@ -3,10 +3,9 @@ import Layout from "@/layouts/Layout.astro";
 
 const fullUrl = Astro.request.url;
 const apiUrl = import.meta.env.ASTRO_API_URL ?? process.env.ASTRO_API_URL;
+const frontendUrl = import.meta.env.ASTRO_FRONTEND_URL ?? process.env.ASTRO_FRONTEND_URL;
 
-const params = fullUrl.replace(`http://localhost:4321/blank`, "");
-
-console.log(params);
+const params = fullUrl.replace(`${frontendUrl}/blank`, "");
 
 const resp = await fetch(`${apiUrl}/v1/auth/google/callback${params}`);
 const respJson = await resp.json();
@@ -25,15 +24,16 @@ interface Data {
 }
 
 const { data } = respJson as Data;
-
 console.log(respJson);
 
 // Set HTTP-only cookie with the token
-Astro.response.headers.set("Set-Cookie", `authToken=${data.token}; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`);
-Astro.response.headers.set(
-  "Set-Cookie",
-  `user=${JSON.stringify(data.user)}; HttpOnly; Secure; SameSite=Strict; Max-Age=3600`
-);
+Astro.cookies.set("authToken", data.token, { httpOnly: true, secure: true, sameSite: "strict", maxAge: 3600 });
+Astro.cookies.set("user", JSON.stringify(data.user), {
+  httpOnly: true,
+  secure: true,
+  sameSite: "strict",
+  maxAge: 3600,
+});
 ---
 
 <Layout title="Authentication Successful">
