@@ -5,6 +5,7 @@ const apiUrl = import.meta.env.ASTRO_API_URL ?? process.env.ASTRO_API_URL;
 
 const token = Astro.cookies.get("authToken")?.value;
 if (!token) {
+  console.log("Token Not Found going to Login");
   return Astro.redirect("/");
 }
 

@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import { UserStore } from "@/stores/user";
 
 const fullUrl = Astro.request.url;
 const apiUrl = import.meta.env.ASTRO_API_URL ?? process.env.ASTRO_API_URL;
@@ -8,6 +9,10 @@ const frontendUrl = import.meta.env.ASTRO_FRONTEND_URL ?? process.env.ASTRO_FRON
 const params = fullUrl.replace(`${frontendUrl}/blank`, "");
 
 const resp = await fetch(`${apiUrl}/v1/auth/google/callback${params}`);
+
+console.log("Masuk ke blank nih ");
+console.log(resp);
+
 const respJson = await resp.json();
 
 interface Data {
@@ -24,16 +29,34 @@ interface Data {
 }
 
 const { data } = respJson as Data;
-console.log(respJson);
+
+console.log(data);
 
 // Set HTTP-only cookie with the token
-Astro.cookies.set("authToken", data.token, { httpOnly: true, secure: true, sameSite: "strict", maxAge: 3600 });
+Astro.cookies.set("authToken", data.token, {
+  httpOnly: true,
+  secure: true,
+  sameSite: "strict",
+  maxAge: 3600,
+});
+
+UserStore.setKey("user", data.user);
+
 Astro.cookies.set("user", JSON.stringify(data.user), {
   httpOnly: true,
   secure: true,
   sameSite: "strict",
   maxAge: 3600,
 });
+
+if (resp.status == 200) {
+  UserStore.setKey("isLoggedIn", true);
+  console.debug("Login Success Redirecting to dashboard");
+  return Astro.redirect("/dashboard");
+}
+
+console.debug("Login Failed Redirecting to Login Page at Home");
+return Astro.redirect("/");
 ---
 
 <Layout title="Authentication Successful">

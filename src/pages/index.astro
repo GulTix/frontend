@@ -1,11 +1,18 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import "@/styles/global.css";
+
+import { UserStore } from "@/stores/user";
 
 const apiUrl = import.meta.env.ASTRO_API_URL ?? process.env.ASTRO_API_URL;
 
 // Check if user is logged in
 const token = Astro.cookies.get("authToken")?.value;
-const isLoggedIn = !!token;
+
+if (token) {
+  UserStore.setKey("isLoggedIn", true);
+}
+const { isLoggedIn } = UserStore.get();
 ---
 
 <Layout title="GulTix - Your Event Ticketing Solution">
