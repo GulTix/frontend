@@ -1,5 +1,5 @@
 ---
-import Layout from "@/layouts/Layout.astro";
+import SidebarLayout from "@/layouts/SidebarLayout.astro";
 
 const apiUrl = import.meta.env.ASTRO_API_URL ?? process.env.ASTRO_API_URL;
 
@@ -37,8 +37,8 @@ try {
 }
 ---
 
-<Layout title="Dashboard">
-  <main class="container mx-auto px-4 py-8">
+<SidebarLayout title="Dashboard">
+  <!-- <main class="container mx-auto px-4 py-8">
     <div class="mb-6 flex items-center justify-between">
       <h1 class="text-3xl font-bold">Dashboard</h1>
     </div>
@@ -61,6 +61,6 @@ try {
       ) : (
         <p>No events found.</p>
       )
-    }
-  </main>
-</Layout>
+    } -->
+  <!-- </main> -->
+</SidebarLayout>

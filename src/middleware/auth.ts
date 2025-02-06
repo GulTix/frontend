@@ -29,5 +29,10 @@ export const authMiddleware = defineMiddleware((context, next) => {
     return redirect("/dashboard");
   }
 
+  if (!token && isLoggedIn) {
+    UserStore.setKey("isLoggedIn", false);
+    return redirect("/");
+  }
+
   return next();
 });

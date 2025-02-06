@@ -8,7 +8,10 @@ const frontendUrl = import.meta.env.ASTRO_FRONTEND_URL ?? process.env.ASTRO_FRON
 
 const params = fullUrl.replace(`${frontendUrl}/blank`, "");
 
-const resp = await fetch(`${apiUrl}/v1/auth/google/callback${params}`);
+const callbackUrl = `${apiUrl}/v1/auth/google/callback${params}`;
+console.log(callbackUrl);
+
+const resp = await fetch(callbackUrl);
 
 console.log("Masuk ke blank nih ");
 console.log(resp);
