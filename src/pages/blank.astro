@@ -7,50 +7,17 @@ const apiUrl = import.meta.env.ASTRO_API_URL ?? process.env.ASTRO_API_URL;
 const frontendUrl = import.meta.env.ASTRO_FRONTEND_URL ?? process.env.ASTRO_FRONTEND_URL;
 
 const params = fullUrl.replace(`${frontendUrl}/blank`, "");
+const res = await fetch(`${apiUrl}/v1/auth/google/callback${params}`);
+const { data } = await res.json();
 
-const resp = await fetch(`${apiUrl}/v1/auth/google/callback${params}`);
-
-console.log("Masuk ke blank nih ");
-console.log(resp);
-
-const respJson = await resp.json();
-
-interface Data {
-  data: {
-    token: string;
-    user: {
-      id: string;
-      username: string;
-      email: string;
-      role: string;
-      deleted: boolean;
-    };
-  };
-}
-
-const { data } = respJson as Data;
-
-console.log(data);
-
-// Set HTTP-only cookie with the token
-Astro.cookies.set("authToken", data.token, {
-  httpOnly: true,
-  secure: true,
-  sameSite: "strict",
-  maxAge: 3600,
-});
-
-UserStore.setKey("user", data.user);
-
-Astro.cookies.set("user", JSON.stringify(data.user), {
-  httpOnly: true,
-  secure: true,
-  sameSite: "strict",
-  maxAge: 3600,
-});
-
-if (resp.status == 200) {
+if (res.status === 200) {
+  Astro.cookies.set("authToken", String(data.token), {
+    httpOnly: true,
+    secure: true,
+    maxAge: 3600,
+  });
   UserStore.setKey("isLoggedIn", true);
+  UserStore.setKey("user", data.user);
   console.debug("Login Success Redirecting to dashboard");
   return Astro.redirect("/dashboard");
 }
