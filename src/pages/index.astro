@@ -8,10 +8,12 @@ const apiUrl = import.meta.env.ASTRO_API_URL ?? process.env.ASTRO_API_URL;
 
 // Check if user is logged in
 const token = Astro.cookies.get("authToken")?.value;
-
 if (token) {
   UserStore.setKey("isLoggedIn", true);
+} else {
+  UserStore.setKey("isLoggedIn", false);
 }
+
 const { isLoggedIn } = UserStore.get();
 ---
 

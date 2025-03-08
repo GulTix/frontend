@@ -10,8 +10,8 @@ export const authMiddleware = defineMiddleware((context, next) => {
   const token = cookies.get("authToken")?.value;
 
   const { isLoggedIn } = UserStore.get() || false;
-  console.log(isLoggedIn);
-  console.log(token);
+  console.log("isLoggedIn: ", isLoggedIn);
+  console.log("token: ", token);
   console.log(url.pathname);
   const isLoginPage = url.pathname == "/";
 
