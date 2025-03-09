@@ -1,4 +1,4 @@
-FROM node:lts-alpine AS runtime
+FROM node:lts AS runtime
 RUN npm install -g pnpm
 WORKDIR /app
 
