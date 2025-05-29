@@ -1,0 +1,87 @@
+---
+import Layout from '@/layouts/Layout.astro';
+// Import React components that will be used - for now, let's import Card and Button
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+
+const API_URL = 'https://backend-1081626211033.asia-southeast1.run.app/api/landing-page-data';
+
+// Default placeholder data
+let pageData = {
+  title: 'Structured Landing Page (Fallback)',
+  hero: {
+    title: 'Welcome to Our Awesome Service! (Fallback)',
+    subtitle: 'Discover the amazing features we offer. (Fallback)',
+    cta: 'Get Started (Fallback)',
+  },
+  features: [
+    { title: 'Feature One (Fallback)', description: 'Description for feature one. (Fallback)' },
+    { title: 'Feature Two (Fallback)', description: 'Description for feature two. (Fallback)' },
+    { title: 'Feature Three (Fallback)', description: 'Description for feature three. (Fallback)' },
+  ],
+  ctaSection: {
+    title: 'Ready to Dive In? (Fallback)',
+    buttonText: 'Sign Up Now (Fallback)',
+  }
+};
+
+// Attempt to fetch data from the API
+try {
+  const response = await fetch(API_URL);
+  if (response.ok) {
+    const apiData = await response.json();
+    // Merge pageData with apiData, API data takes precedence
+    pageData = { ...pageData, ...apiData };
+    console.log('Successfully fetched page data from API.');
+  } else {
+    console.error(`API request failed with status: ${response.status}. Using fallback data.`);
+    // pageData remains the default placeholder data
+  }
+} catch (error) {
+  console.error('Error fetching page data:', error instanceof Error ? error.message : String(error), '. Using fallback data.');
+  // pageData remains the default placeholder data
+}
+---
+
+<Layout title={pageData.title}>
+  <div class="container mx-auto px-4 py-8">
+    <!-- Hero Section -->
+    <section class="text-center py-16">
+      <h1 class="text-4xl font-bold mb-4">{pageData.hero.title}</h1>
+      <p class="text-xl text-muted-foreground mb-8">{pageData.hero.subtitle}</p>
+      <Button size="lg" client:visible>{pageData.hero.cta}</Button>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-16">
+      <h2 class="text-3xl font-bold text-center mb-12">Features</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        {pageData.features.map(feature => (
+          <Card client:visible>
+            <CardHeader>
+              <CardTitle>{feature.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>{feature.description}</p>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 text-center bg-secondary/30 rounded-lg">
+      <h2 class="text-3xl font-bold mb-4">{pageData.ctaSection.title}</h2>
+      <Button size="lg" variant="outline" client:visible>{pageData.ctaSection.buttonText}</Button>
+    </section>
+
+    <!-- Comment: API Integration Placeholder -->
+    <!--
+      The data above is placeholder data.
+      In a future step, this page will fetch data from:
+      {API_URL}
+      And the `pageData` variable will be populated with the response.
+      The React components (Card, Button) will then be rendered with this dynamic data.
+    -->
+  </div>
+</Layout>
